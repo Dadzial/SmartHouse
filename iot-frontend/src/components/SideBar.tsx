@@ -13,7 +13,6 @@ import ThermostatIcon from '@mui/icons-material/Thermostat';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GarageIcon from '@mui/icons-material/Garage';
 import LogoutIcon from '@mui/icons-material/Logout';
-
 import appIcon from '../assets/svg/iot-house-icon.svg';
 
 const drawerWidth = 300;
@@ -72,38 +71,34 @@ export default function PermanentDrawer() {
                             <ListItemText primary="Home" />
                         </ListItemButton>
                     </ListItem>
-
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon><LightbulbIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
                             <ListItemText primary="Lights" />
                         </ListItemButton>
                     </ListItem>
-
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon><ThermostatIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
                             <ListItemText primary="Temperature" />
                         </ListItemButton>
                     </ListItem>
-
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon><SettingsIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
-                            <ListItemText primary="Settings" />
-                        </ListItemButton>
-                    </ListItem>
-
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon><GarageIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
                             <ListItemText primary="Garage" />
                         </ListItemButton>
                     </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon><SettingsIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                            <ListItemText primary="Settings" />
+                        </ListItemButton>
+                    </ListItem>
                 </List>
             </Box>
             <Box>
-                <Divider sx={{ my: 1 }} />
+                <Divider />
                 <List sx={{ color: '#000000', textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', fontWeight: 'bold', fontSize: '20px' }}>
                     <ListItem disablePadding>
                         <ListItemButton>

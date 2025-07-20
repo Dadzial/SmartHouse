@@ -3,12 +3,17 @@ import { Router, Request, Response } from "express";
 import Controller from "../interfaces/Controller";
 import axios from "axios";
 import {Server, Socket} from "socket.io";
+import Joi from "joi";
+import {LightUsageModel} from "../modules/models/LightUsage.model";
+import lightUsageSchema from "../modules/schemas/LightUsage.schema";
+import LightUsageService from "../modules/services/LightUsage.service";
 
 class LightController implements Controller {
     public path = "/light";
     public router = Router();
-    public esp32LightEndPoint = "http://192.168.2.191";
+    public esp32LightEndPoint = "http://192.168.2.192";
     private io: Server
+    private lightUsageService = new LightUsageService();
 
     constructor(io: Server) {
         this.io = io;
@@ -20,6 +25,8 @@ class LightController implements Controller {
         this.router.get(`${this.path}/status`, this.getAllLightsStatus);
         this.router.post(`${this.path}/toggle`, this.turnLight);
         this.router.post(`${this.path}/toggle/all`, this.turnAllLights);
+        this.router.get(`${this.path}/usage`, this.getLightUsageDurations);
+        this.router.delete(`${this.path}/usage/reset`, this.resetLightUsageDurations);
     }
 
     private getAllLightsStatus = async (req: Request, res: Response) => {
@@ -34,24 +41,37 @@ class LightController implements Controller {
     private turnLight = async (req: Request, res: Response) => {
         const { room, state } = req.body;
 
-        const validRooms = ["kitchen", "garage", "room", "bath"];
-        if (!validRooms.includes(room) || typeof state !== "boolean") {
-            return res.status(400).json({ error: "Invalid payload. Expected { room: string, state: boolean }" });
-        }
-
-        const payload: Record<string, boolean> = {
-            [room]: state
-        };
-
         try {
+            if (typeof state !== "boolean" || !room) {
+                return res.status(400).json({
+                    success: false,
+                    error: "Invalid payload. Expected { room: string, state: boolean }"
+                });
+            }
+
+            const payload: Record<string, boolean> = { [room]: state };
             const response = await axios.post(this.esp32LightEndPoint + "/led", payload, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                headers: { "Content-Type": "application/json" }
             });
-            res.status(200).send(response.data);
+
+            await this.lightUsageService.updateLightState(room, state);
+
+            console.log(`Light turned ${state ? "ON" : "OFF"} in ${room} at ${new Date().toISOString()}`);
+
+            res.status(200).json({
+                success: true,
+                room,
+                state,
+                timestamp: new Date().toISOString()
+            });
+
         } catch (error) {
-            res.status(500).send(error);
+            console.error("Error controlling light:", error);
+            res.status(500).json({
+                success: false,
+                error: "Failed to control light",
+                details: error instanceof Error ? error.message : String(error)
+            });
         }
     }
 
@@ -75,6 +95,11 @@ class LightController implements Controller {
                     "Content-Type": "application/json"
                 }
             });
+
+            for (const room of Object.keys(payload)) {
+                await this.lightUsageService.updateLightState(room, state);
+            }
+
             res.status(200).send(response.data);
         } catch (error) {
             res.status(500).send(error);
@@ -110,6 +135,9 @@ class LightController implements Controller {
                             "Content-Type": "application/json"
                         }
                     });
+
+                    await this.lightUsageService.updateLightState(data.room, data.state);
+
                     this.io.emit("light:statusUpdate", response.data);
                 } catch (error) {
                     socket.emit("light:error", { message: "Error sending data to ESP32" });
@@ -134,6 +162,11 @@ class LightController implements Controller {
                             "Content-Type": "application/json"
                         }
                     });
+
+                    for (const room of Object.keys(payload)) {
+                        await this.lightUsageService.updateLightState(room, data.state);
+                    }
+
                     this.io.emit("light:statusUpdate", response.data);
                 } catch (error) {
                     socket.emit("light:error", { message: "Error sending data to ESP32" });
@@ -146,6 +179,23 @@ class LightController implements Controller {
         });
     }
 
+    private getLightUsageDurations = async (req: Request, res: Response) => {
+        try {
+            const durations = await this.lightUsageService.getLightUsageDurations();
+            res.status(200).json(durations);
+        } catch (error) {
+            res.status(500).json({ error: "Error getting light usage durations" });
+        }
+    };
+
+    private resetLightUsageDurations = async (req: Request, res: Response) => {
+        try {
+            await this.lightUsageService.resetLightUsage();
+            res.status(200).json({ success: true });
+        } catch (error) {
+            res.status(500).json({ error: "Error resetting light usage durations" });
+        }
+    };
 }
 
 export default LightController;

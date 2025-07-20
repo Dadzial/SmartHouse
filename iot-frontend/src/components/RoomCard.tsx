@@ -6,8 +6,13 @@ import {Switch} from "@mui/material";
 
 
 export default function BasicCard({ title, iconPath, state, onToggle }: any) {
+
+    const iconFilter =state
+        ? 'invert(88%) sepia(97%) saturate(7486%) hue-rotate(1deg) brightness(105%) contrast(105%)'
+        : 'invert(1)';
+
     return (
-        <Card sx={{ minWidth: 250 , backgroundColor: '#ffffff'}}>
+        <Card sx={{ minWidth: 250 , backgroundColor: '#ffffff', borderRadius: '25px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)'}}>
             <CardContent>
                 <Typography gutterBottom sx={{ color: '#070707', fontSize: 25, fontWeight: 'bold' }}>
                     {title}
@@ -24,7 +29,7 @@ export default function BasicCard({ title, iconPath, state, onToggle }: any) {
                         margin: '16px auto',
                     }}
                 >
-                    <img src={iconPath} alt={title} style={{ width: 40, height: 40, filter: 'invert(1)' }} />
+                    <img src={iconPath} alt={title} style={{ width: 40, height: 40, filter: iconFilter }} />
                 </Box>
                 <Typography variant="h5" component="div">
                     {state ? 'ON' : 'OFF'}

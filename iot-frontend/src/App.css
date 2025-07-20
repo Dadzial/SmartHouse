@@ -13,10 +13,9 @@
 .card-grid {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 6rem;
   justify-content: center;
   flex-wrap: nowrap;
-
   padding-bottom: 1rem;
 }
 

@@ -7,7 +7,7 @@ import kitchen from "./assets/kitchen.png";
 import room from "./assets/bed.png";
 import garage from "./assets/private-garage.png";
 import PermanentDrawer from "./components/SideBar.tsx";
-
+import HorizontalBars from "./components/LightUsageChart.tsx";
 
 const socket = io('http://localhost:3000');
 
@@ -68,6 +68,9 @@ function App() {
                             onToggle={() => handleToggle(room.name.toLowerCase())}
                         />
                     ))}
+                </div>
+                <div className="chart-container">
+                    <HorizontalBars />
                 </div>
             </div>
         </div>

@@ -8,6 +8,8 @@
   background-image: url("assets/backgrounds/smart_home_img_night.png");
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
+  height: 100vh;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
