@@ -1,25 +1,56 @@
 #root {
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
 .main-content {
-  margin-left: 300px;
+  margin-left: 175px;
   padding: 2rem;
+  width: calc(100% - 200px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .card-grid {
   display: flex;
   flex-direction: row;
   gap: 6rem;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   padding-bottom: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0;
 }
 
 .card-grid > * {
   flex: 0 0 auto;
 }
 
+.chart-and-scheduler {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 3rem 0 0 0;
+  justify-content: flex-start;
+  gap: 4rem;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.chart-container {
+  flex: 1;
+  min-width: 750px;
+  max-width: 500px;
+}
+
+.scheduler-container {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 2rem;
+}

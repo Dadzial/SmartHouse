@@ -8,7 +8,6 @@ interface ChartData {
 
 const chartSetting = {
     height: 400,
-    margin: { left: 40 },
 };
 
 export default function HorizontalBars() {
@@ -29,8 +28,8 @@ export default function HorizontalBars() {
                     setIsLoading(false);
                     setError(null);
                 })
-                .catch((error) => {
-                    setError(error.message);
+                .catch(() => {
+                    setError('Error fetching data');
                     setIsLoading(false);
                 });
         };
@@ -48,10 +47,9 @@ export default function HorizontalBars() {
     const rooms = chartData.map((item) => item.room);
 
     return (
-        <BarChart sx={{ backgroundColor: '#ffffff', borderRadius: '25px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
+        <BarChart sx={{ backgroundColor: '#ffffff', borderRadius: '25px' ,width: '100%', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
             layout="horizontal"
             height={chartSetting.height}
-            margin={chartSetting.margin}
             xAxis={[
                 {
                     label: 'Usage (minutes)',
@@ -68,6 +66,7 @@ export default function HorizontalBars() {
                 {
                     label: 'Light Usage',
                     data: usageData,
+                    color: '#070707',
                 },
             ]}
         />
