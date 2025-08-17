@@ -1,4 +1,3 @@
-
 import '../App.css';
 import BasicCard from "../components/RoomCard";
 import io from "socket.io-client";

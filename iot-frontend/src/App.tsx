@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { isExpired } from "react-jwt";
 import LoginForm from "./components/Login";
+import SignUpForm from "./components/SignUpForm";
 import Dashboard from './components/Dashboard';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<LoginForm />} />
+                <Route path="/register" element={< SignUpForm />} />
                 <Route path="/dashboard" element={
                     isTokenExpired ? <Navigate replace to="/" /> : <Dashboard />
                 } />

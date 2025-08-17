@@ -1,9 +1,11 @@
 import {Component, type ChangeEvent, type FormEvent} from "react";
-import {TextField, Button, Typography, Alert} from '@mui/material';
+import {TextField, Button, Typography, Alert, InputAdornment} from '@mui/material';
 import Box from "@mui/material/Box";
 import Drawer from '@mui/material/Drawer';
 import appIcon from '../assets/svg/iot-house-icon.svg';
-
+import LockIcon from '@mui/icons-material/Lock';
+import PersonIcon from '@mui/icons-material/Person';
+import '@fontsource/inter/500.css';
 const drawerWidth = 300;
 
 interface Account {
@@ -163,6 +165,13 @@ class LoginForm extends Component<{}, State> {
                                     },
                                     '& .MuiInputBase-input': { color: 'white' }
                                 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <PersonIcon sx={{ color: 'white' }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
                             />
                             <TextField
                                 placeholder="Password"
@@ -191,6 +200,13 @@ class LoginForm extends Component<{}, State> {
                                     },
                                     '& .MuiInputBase-input': { color: 'white' }
                                 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LockIcon sx={{ color: 'white' }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
                             />
                             <Button
                                 type="submit"
@@ -201,8 +217,12 @@ class LoginForm extends Component<{}, State> {
                                     borderRadius: 25,
                                     textTransform: 'none',
                                     color: 'white',
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    FontFamily: 'Inter , sans-serif',
                                     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
                                     width: '40%',
+                                    height: '50px',
                                     }}
                             >
                                 Login
@@ -210,6 +230,32 @@ class LoginForm extends Component<{}, State> {
                             {this.state.errors.submit && (
                                 <Alert severity="error" sx={{mt: 2}}>{this.state.errors.submit}</Alert>
                             )}
+                            <Typography
+                                variant="body2"
+                                sx={{color: '#070707', mt: 2, fontSize: 13, fontWeight: 'bold', textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',textAlign: 'center'}}
+                            >
+                                 Don't have an account?
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                sx={{
+                                    mt: 2,
+                                    backgroundColor: '#070707',
+                                    borderRadius: 25,
+                                    textTransform: 'none',
+                                    color: 'white',
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Inter , sans-serif',
+                                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                                    width: '40%',
+                                    height: '50px',
+                                }}
+                                onClick={() => window.location.href = '/register'}
+                            >
+                                Register
+                            </Button>
                         </Box>
                     </Box>
                 </Drawer>
