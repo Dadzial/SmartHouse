@@ -2,17 +2,16 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import {Switch} from "@mui/material";
+import { Switch } from "@mui/material";
 
+const BasicCard = ({ title, iconPath, state, onToggle }: any) => {
 
-export default function BasicCard({ title, iconPath, state, onToggle }: any) {
-
-    const iconFilter =state
+    const iconFilter = state
         ? 'invert(88%) sepia(97%) saturate(7486%) hue-rotate(1deg) brightness(105%) contrast(105%)'
         : 'invert(1)';
 
     return (
-        <Card sx={{ minWidth: 250 , backgroundColor: '#ffffff', borderRadius: '25px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)'}}>
+        <Card sx={{ minWidth: 250, backgroundColor: '#ffffff', borderRadius: '25px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}>
             <CardContent>
                 <Typography gutterBottom sx={{ color: '#070707', fontSize: 25, fontWeight: 'bold' }}>
                     {title}
@@ -39,3 +38,5 @@ export default function BasicCard({ title, iconPath, state, onToggle }: any) {
         </Card>
     );
 }
+
+export default BasicCard;

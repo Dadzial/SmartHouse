@@ -6,20 +6,20 @@ import bath from "../assets/bathtub.png";
 import kitchen from "../assets/kitchen.png";
 import room from "../assets/bed.png";
 import garage from "../assets/private-garage.png";
-import PermanentDrawer from "../components/SideBar.tsx";
+import PermanentDrawer from "./SideBarDashBoard.tsx";
 import HorizontalBars from "../components/LightUsageChart.tsx";
 import LightSchedulerCard from "../components/LightScheduler.tsx";
 
 const socket = io('http://localhost:3000');
 
-const rooms=[
-    {name:"Kitchen",iconPath: kitchen},
-    {name:"Garage",iconPath: garage},
-    {name:"Bath",iconPath: bath},
-    {name:"Room",iconPath: room},
+const rooms = [
+    { name: "Kitchen", iconPath: kitchen },
+    { name: "Garage", iconPath: garage },
+    { name: "Bath", iconPath: bath },
+    { name: "Room", iconPath: room },
 ];
 
-function Dashboard() {
+const LightsView = () => {
     const [roomStates, setRoomStates] = useState<Record<string, boolean>>({
         kitchen: false,
         garage: false,
@@ -48,11 +48,11 @@ function Dashboard() {
         };
     }, []);
 
-    function handleToggle(roomName: string) {
+    const handleToggle = (roomName: string) => {
         const newState = !roomStates[roomName];
         setRoomStates(prev => ({ ...prev, [roomName]: newState }));
         socket.emit("light:toggle", { room: roomName.toLowerCase(), state: newState });
-    }
+    };
 
     return (
         <div className="App">
@@ -80,6 +80,6 @@ function Dashboard() {
             </div>
         </div>
     );
-}
+};
 
-export default Dashboard;
+export default LightsView;

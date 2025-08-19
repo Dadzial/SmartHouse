@@ -10,34 +10,35 @@ const chartSetting = {
     height: 400,
 };
 
-export default function HorizontalBars() {
+const HorizontalBars = () => {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchData = () => {
-            fetch('http://localhost:3100/light/usage')
-                .then((response) => response.json())
-                .then((data) => {
-                    const transformedData = Object.entries(data).map(([room, usage]) => ({
-                        room,
-                        usage: usage as number,
-                    }));
-                    setChartData(transformedData);
-                    setIsLoading(false);
-                    setError(null);
-                })
-                .catch(() => {
-                    setError('Error fetching data');
-                    setIsLoading(false);
-                });
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3100/light/usage');
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data: Record<string, number> = await response.json();
+
+                const transformedData: ChartData[] = Object.entries(data).map(([room, usage]) => ({
+                    room,
+                    usage,
+                }));
+
+                setChartData(transformedData);
+                setIsLoading(false);
+                setError(null);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Error fetching data');
+                setIsLoading(false);
+            }
         };
 
         fetchData();
         const interval = setInterval(fetchData, 5000);
         return () => clearInterval(interval);
-
     }, []);
 
     if (isLoading) return <div>Loading...</div>;
@@ -47,7 +48,13 @@ export default function HorizontalBars() {
     const rooms = chartData.map((item) => item.room);
 
     return (
-        <BarChart sx={{ backgroundColor: '#ffffff', borderRadius: '25px' ,width: '100%', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
+        <BarChart
+            sx={{
+                backgroundColor: '#ffffff',
+                borderRadius: '25px',
+                width: '100%',
+                boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+            }}
             layout="horizontal"
             height={chartSetting.height}
             xAxis={[
@@ -71,4 +78,6 @@ export default function HorizontalBars() {
             ]}
         />
     );
-}
+};
+
+export default HorizontalBars;

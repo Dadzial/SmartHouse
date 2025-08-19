@@ -1,15 +1,8 @@
 import lightUsageSchema from "../schemas/LightUsage.schema";
-import { LightUsageModel } from "../models/LightUsage.model";
 
-function durationsToMinutes(durations: Record<string, number>): Record<string, number> {
-    const result: Record<string, number> = {};
-    for (const room in durations) {
-        result[room] = Math.round(durations[room] / 60000);
-    }
-    return result;
-}
 
 class LightUsageService {
+
     public async updateLightState(room: string, state: boolean): Promise<void> {
         const record = await lightUsageSchema.findOne({ room });
 
@@ -43,7 +36,15 @@ class LightUsageService {
             durations[u.room] = duration;
         });
 
-        return durationsToMinutes(durations);
+        return this.durationsToMinutes(durations);
+    }
+
+    public durationsToMinutes(durations: Record<string, number>): Record<string, number> {
+        const result: Record<string, number> = {};
+        for (const room in durations) {
+            result[room] = Math.round(durations[room] / 60000);
+        }
+        return result;
     }
 
     public async resetLightUsage(): Promise<void> {

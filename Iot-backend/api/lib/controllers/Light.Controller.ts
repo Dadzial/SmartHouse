@@ -3,6 +3,7 @@ import { Router, Request, Response } from "express";
 import Controller from "../interfaces/Controller";
 import axios from "axios";
 import {Server, Socket} from "socket.io";
+import cron from "node-cron";
 import Joi from "joi";
 import {LightUsageModel} from "../modules/models/LightUsage.model";
 import lightUsageSchema from "../modules/schemas/LightUsage.schema";
@@ -14,6 +15,7 @@ class LightController implements Controller {
     public esp32LightEndPoint = "http://192.168.2.192";
     private io: Server
     private lightUsageService = new LightUsageService();
+
 
     constructor(io: Server) {
         this.io = io;
@@ -173,10 +175,53 @@ class LightController implements Controller {
                 }
             });
 
+            socket.on("light:schedule", (data: { rooms: string[]; days: string[]; startTime: string; endTime: string }) => {
+                console.log("New schedule received:", data);
+
+                const { rooms, days, startTime, endTime } = data;
+
+                const dayMap: Record<string, number> = {
+                    Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6
+                };
+
+                days.forEach(day => {
+                    const cronDay = dayMap[day];
+                    if (cronDay === undefined) return;
+
+                    const [startH, startM] = startTime.split(":").map(Number);
+                    const [endH, endM] = endTime.split(":").map(Number);
+
+
+                    cron.schedule(`${startM} ${startH} * * ${cronDay}`, async () => {
+                        for (const room of rooms) {
+                            await this.toggleRoom(room, true);
+                        }
+                    });
+
+                    cron.schedule(`${endM} ${endH} * * ${cronDay}`, async () => {
+                        for (const room of rooms) {
+                            await this.toggleRoom(room, false);
+                        }
+                    });
+                });
+
+                socket.emit("light:schedule:ok", { message: "Schedule saved" });
+            });
+
             socket.on("disconnect", () => {
                 console.log(`Disconnect: ${socket.id}`);
             });
         });
+    }
+
+    private async toggleRoom(room: string, state: boolean) {
+        const payload: Record<string, boolean> = { [room]: state };
+        const response = await axios.post(this.esp32LightEndPoint + "/led", payload, {
+            headers: { "Content-Type": "application/json" }
+        });
+
+        await this.lightUsageService.updateLightState(room, state);
+        this.io.emit("light:statusUpdate", response.data);
     }
 
     private getLightUsageDurations = async (req: Request, res: Response) => {

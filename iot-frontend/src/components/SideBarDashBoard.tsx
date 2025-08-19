@@ -14,10 +14,16 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import GarageIcon from '@mui/icons-material/Garage';
 import LogoutIcon from '@mui/icons-material/Logout';
 import appIcon from '../assets/svg/iot-house-icon.svg';
-
+import { Link } from "react-router-dom";
 const drawerWidth = 300;
 
-export default function PermanentDrawer() {
+const PermanentDrawer = () => {
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        window.location.href = '/';
+    }
+
     return (
         <Drawer
             variant="permanent"
@@ -33,7 +39,6 @@ export default function PermanentDrawer() {
                 },
             }}
         >
-
             <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150 }}>
                     <img
@@ -64,34 +69,34 @@ export default function PermanentDrawer() {
                     textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
                     fontWeight: 'bold',
                     fontSize: '20px'
-
-                }} >                    <ListItem disablePadding >
+                }}>
+                    <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemIcon><HomeIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                            <ListItemIcon><HomeIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Home" />
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon><LightbulbIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                        <ListItemButton component={Link} to="/lights">
+                            <ListItemIcon><LightbulbIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Lights" />
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon><ThermostatIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                        <ListItemButton component={Link} to="/weather">
+                            <ListItemIcon><ThermostatIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Temperature" />
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemIcon><GarageIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                            <ListItemIcon><GarageIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Garage" />
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemIcon><SettingsIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                            <ListItemIcon><SettingsIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Settings" />
                         </ListItemButton>
                     </ListItem>
@@ -101,8 +106,8 @@ export default function PermanentDrawer() {
                 <Divider />
                 <List sx={{ color: '#000000', textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', fontWeight: 'bold', fontSize: '20px' }}>
                     <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon><LogoutIcon sx={{ color: '#000000' ,filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}} /></ListItemIcon>
+                        <ListItemButton onClick={logout}>
+                            <ListItemIcon><LogoutIcon sx={{ color: '#000000', filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))' }} /></ListItemIcon>
                             <ListItemText primary="Logout" />
                         </ListItemButton>
                     </ListItem>
@@ -111,3 +116,5 @@ export default function PermanentDrawer() {
         </Drawer>
     );
 }
+
+export default PermanentDrawer;

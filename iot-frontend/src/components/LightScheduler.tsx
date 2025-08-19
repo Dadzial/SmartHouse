@@ -6,11 +6,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import {Divider} from "@mui/material";
+import { Divider } from "@mui/material";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
+import { io } from 'socket.io-client';
 
-export default function LightSchedulerCard() {
+const socket = io('http://localhost:3000');
+
+const LightSchedulerCard = () => {
     const rooms = ["Kitchen", "Garage", "Bath", "Room"];
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
@@ -18,7 +21,26 @@ export default function LightSchedulerCard() {
     const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs().hour(23).minute(0));
     const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs().hour(5).minute(0).add(1, 'day'));
 
+    const handleSave = () => {
+        if (selectedRooms.length === 0 || selectedDays.length === 0 || !startTime || !endTime) {
+            alert('Please select at least one room, day, start time, and end time.');
+            return;
+        }
+        socket.emit("light:schedule", {
+            rooms: selectedRooms.map(r => r.toLowerCase()),
+            days: selectedDays,
+            startTime: startTime.format("HH:mm"),
+            endTime: endTime.format("HH:mm")
+        });
+        alert("Schedule saved successfully!");
+    }
 
+    const handleReset = () => {
+        setSelectedRooms([]);
+        setSelectedDays([]);
+        setStartTime(dayjs().hour(23).minute(0));
+        setEndTime(dayjs().hour(5).minute(0).add(1, 'day'));
+    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -38,7 +60,7 @@ export default function LightSchedulerCard() {
                                     minWidth: 90,
                                     height: 36,
                                     boxSizing: 'border-box',
-                                    color: selectedRooms.includes(room) ? '#ffffff' : '#ffffff',
+                                    color: '#ffffff',
                                     backgroundColor: selectedRooms.includes(room) ? '#4caf50' : '#070707',
                                     border: selectedRooms.includes(room) ? '2px solid #388e3c' : 'none',
                                     '&:hover': {
@@ -86,7 +108,7 @@ export default function LightSchedulerCard() {
                                     minWidth: 30,
                                     height: 36,
                                     boxSizing: 'border-box',
-                                    color: selectedDays.includes(day) ? '#ffffff' : '#ffffff',
+                                    color: '#ffffff',
                                     backgroundColor: selectedDays.includes(day) ? '#4caf50' : '#070707',
                                     border: selectedDays.includes(day) ? '2px solid #388e3c' : 'none',
                                     '&:hover': {
@@ -106,39 +128,34 @@ export default function LightSchedulerCard() {
                         ))}
                     </Box>
                     <Box>
-                    <Divider sx={{ mt: 2, mb: 2 }} />
+                        <Divider sx={{ mt: 2, mb: 2 }} />
                     </Box>
-                    <Box sx={{ display: 'flex',fulexDirection: 'row', justifyContent: 'flex-start'}}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                         <Button
                             variant="contained"
-                            sx={{ 
-                                borderRadius: 3, 
-                                textTransform: 'none', 
-                                minWidth: 90, 
-                                color: '#ffffff', 
-                                backgroundColor: '#070707', 
+                            sx={{
+                                borderRadius: 3,
+                                textTransform: 'none',
+                                minWidth: 90,
+                                color: '#ffffff',
+                                backgroundColor: '#070707',
                                 mt: 1.4,
                                 mr: 32
                             }}
-                            onClick={()=>{
-                                setSelectedRooms([]);
-                                setSelectedDays([]);
-                                setStartTime(dayjs().hour(23).minute(0));
-                                setEndTime(dayjs().hour(5).minute(0).add(1, 'day'));
-                            }}
+                            onClick={handleReset}
                         >
                             Reset
                         </Button>
                         <Button
                             variant="contained"
-                            sx={{ 
-                                borderRadius: 3, 
-                                textTransform: 'none', 
-                                minWidth: 90, 
-                                color: '#ffffff', 
+                            onClick={handleSave}
+                            sx={{
+                                borderRadius: 3,
+                                textTransform: 'none',
+                                minWidth: 90,
+                                color: '#ffffff',
                                 backgroundColor: '#070707',
                                 mt: 1.4
-
                             }}
                         >
                             Save
@@ -149,3 +166,5 @@ export default function LightSchedulerCard() {
         </LocalizationProvider>
     );
 }
+
+export default LightSchedulerCard;
