@@ -16,8 +16,9 @@ class WeatherController implements Controller {
     }
 
     public initializeRoutes() {
-        this.router.get(`${this.path}/get/temp/:city`, this.getJsonTempData);
-        this.router.get(`${this.path}/get/history/:city`, this.getTemperatureHistory);
+        this.router.get(`${this.path}/get/weather/:city`, this.getJsonTempData);
+        this.router.get(`${this.path}/get/weather/geo`) , this.getWeatherByCoordinates;
+        this.router.get(`${this.path}/get/history/weather/:city`, this.getTemperatureHistory);
     }
 
     public getJsonTempData = async (req: Request, res: Response) => {
@@ -32,12 +33,16 @@ class WeatherController implements Controller {
             const filteredData ={
                 city: data.name,
                 temperature: data.main.temp,
+                windDeg: data.wind.deg,
+                windSpeed: data.wind.speed,
                 timestamp: Date.now()
             }
 
             const schema = Joi.object({
                 city: Joi.string().required(),
                 temperature: Joi.number().required(),
+                windDeg: Joi.number().required(),
+                windSpeed: Joi.number().required(),
                 timestamp: Joi.number().required(),
             });
 
@@ -67,6 +72,27 @@ class WeatherController implements Controller {
             res.status(200).json(history);
         } catch (error: any) {
             res.status(500).json({ message: "Error fetching temperature history" });
+        }
+    };
+
+    public getWeatherByCoordinates = async (req: Request, res: Response) => {
+        const schema = Joi.object({
+            lat: Joi.number().required(),
+            lon: Joi.number().required(),
+        });
+        const validationResult = schema.validate(req.query);
+
+        if (validationResult.error) {
+            return res.status(400).json({ message: validationResult.error.message });
+        }
+
+        const { lat, lon } = validationResult.value;
+        try {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${config.weatherApiKey}&units=metric`;
+            const response = await axios.get(url);
+            res.json(response.data);
+        } catch (error: any) {
+            res.status(500).json({ message: "Error fetching weather data" });
         }
     };
 
