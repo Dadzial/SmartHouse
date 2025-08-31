@@ -1,9 +1,14 @@
 import dashboardStyles from "./Dashboard.module.css"
+import WeatherCard from "../components/WeatherCard";
+import HumidityCard from "../components/HumidityCard";
+import TemperatureCard from "../components/TemperatureCard";
 import ToolBarDashboard from "../components/ToolBarDashboard";
+import LightsUsageChart from "../components/LightsUsageChart";
 import {useThemeContext} from "../contexts/ThemeContext";
 import {Button} from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import LightsSwitches from "../components/LightsSwitches";
 
 const DashBoard= () => {
 
@@ -15,6 +20,17 @@ const DashBoard= () => {
             <div className={dashboardStyles.mainContainer}>
                 <div className={dashboardStyles.ToolBarContainer}>
                     <ToolBarDashboard darkMode={darkMode} userName={storedUserName}/>
+                </div>
+                <div className={dashboardStyles.cardsGrid}>
+                    <TemperatureCard darkMode={darkMode}/>
+                    <HumidityCard darkMode={darkMode}/>
+                    <WeatherCard darkMode={darkMode} cityName="warsaw"/>
+                    <div className={dashboardStyles.lightsUsageChartContainer}>
+                        <LightsUsageChart darkMode={darkMode}/>
+                    </div>
+                    <div className={dashboardStyles.lightsSwitchesContainer}>
+                        <LightsSwitches/>
+                    </div>
                 </div>
                 <div className={dashboardStyles.footer}>
                     <Button
